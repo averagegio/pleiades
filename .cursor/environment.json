@@ -1,0 +1,10 @@
+{
+  "install": "npm install",
+  "start": "npm run dev",
+  "terminals": [
+    {
+      "name": "Next.js dev server",
+      "command": "npm run dev"
+    }
+  ]
+}
