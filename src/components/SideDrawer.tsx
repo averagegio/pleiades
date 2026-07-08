@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
+  ACCOUNT_PAGES,
   LEGAL_PAGES,
   NAV_PAGES,
   navHref,
@@ -11,6 +12,7 @@ import {
 } from "@/lib/navigation";
 import { SISTER_ORBITS } from "@/lib/sister-orbits";
 import type { SisterOrbitId } from "@/lib/sister-orbits";
+import { useAuth } from "@/lib/use-auth";
 
 type SideDrawerProps = {
   open: boolean;
@@ -20,6 +22,7 @@ type SideDrawerProps = {
 export function SideDrawer({ open, onClose }: SideDrawerProps) {
   const panelRef = useRef<HTMLElement>(null);
   const pathname = usePathname();
+  const { user, loading, logout } = useAuth();
   const [hash, setHash] = useState("");
   const [orbit, setOrbit] = useState<SisterOrbitId | null>(null);
 
@@ -104,6 +107,65 @@ export function SideDrawer({ open, onClose }: SideDrawerProps) {
               </li>
             );
           })}
+        </ul>
+
+        <p className="mb-2 text-[10px] font-medium uppercase tracking-widest text-zinc-700">
+          Account
+        </p>
+        <ul className="mb-8 flex flex-col gap-1">
+          {!loading && user ? (
+            <>
+              <li>
+                <Link
+                  href="/account"
+                  onClick={onClose}
+                  className={`block rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                    pathname === "/account"
+                      ? "bg-white/10 text-white"
+                      : "text-zinc-400 hover:bg-white/5 hover:text-white"
+                  }`}
+                >
+                  {user.name}
+                  <span className="mt-0.5 block text-xs font-normal text-zinc-600">
+                    {user.xConnected
+                      ? `@${user.xUsername ?? "x"} connected`
+                      : "Account & X"}
+                  </span>
+                </Link>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => {
+                    void logout().then(onClose);
+                  }}
+                  className="block w-full rounded-lg px-3 py-2.5 text-left text-sm text-zinc-500 transition-colors hover:bg-white/5 hover:text-zinc-300"
+                >
+                  Sign out
+                </button>
+              </li>
+            </>
+          ) : (
+            ACCOUNT_PAGES.map((page) => {
+              const href = navHref(page);
+              const isActive = pathname === page.href;
+              return (
+                <li key={`${page.label}-${href}`}>
+                  <Link
+                    href={href}
+                    onClick={onClose}
+                    className={`block rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                      isActive
+                        ? "bg-white/10 text-white"
+                        : "text-zinc-400 hover:bg-white/5 hover:text-white"
+                    }`}
+                  >
+                    {page.label}
+                  </Link>
+                </li>
+              );
+            })
+          )}
         </ul>
 
         <p className="mb-2 text-[10px] font-medium uppercase tracking-widest text-zinc-700">
