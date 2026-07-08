@@ -114,7 +114,7 @@ export function WatchList({
 
         <form
           onSubmit={addStar}
-          className="flex flex-col gap-4 rounded-xl border border-white/10 bg-zinc-950/90 p-4 backdrop-blur-sm"
+          className="flex flex-col gap-4 p-4"
         >
           <OrbitPicker
             value={orbit}
@@ -123,7 +123,7 @@ export function WatchList({
           />
 
           {orbit === "sterope" && (
-            <p className="rounded-lg border border-amber-500/20 bg-amber-500/5 px-3 py-2 text-xs text-amber-200/80">
+            <p className="px-1 py-2 text-xs text-amber-200/70">
               Public sky: only note public personas. No private addresses or
               doxxing.
             </p>
@@ -134,14 +134,14 @@ export function WatchList({
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Nickname or name"
-            className="h-11 rounded-lg border border-white/10 bg-black px-3 text-base text-zinc-50 outline-none focus:border-white/25"
+            className="h-11 rounded-lg border border-white/10 bg-transparent px-3 text-base text-zinc-50 outline-none focus:border-white/25"
           />
           <input
             aria-label="Note"
             value={note}
             onChange={(e) => setNote(e.target.value)}
             placeholder="Your private note (optional)"
-            className="h-11 rounded-lg border border-white/10 bg-black px-3 text-base text-zinc-50 outline-none focus:border-white/25"
+            className="h-11 rounded-lg border border-white/10 bg-transparent px-3 text-base text-zinc-50 outline-none focus:border-white/25"
           />
 
           {orbit === "alcyone" && (
@@ -185,7 +185,7 @@ export function WatchList({
                 return (
                   <li
                     key={star.id}
-                    className="flex items-center justify-between gap-4 rounded-lg border border-white/10 bg-zinc-950/90 px-4 py-3 backdrop-blur-sm"
+                    className="flex items-center justify-between gap-4 border-b border-white/5 py-3"
                   >
                     <div className="flex min-w-0 flex-col gap-1">
                       <div className="flex items-center gap-2">

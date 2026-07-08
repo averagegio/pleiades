@@ -60,10 +60,18 @@ export const BUILD_SEQUENCE: BuildStep[] = [
 ];
 
 const STEP_MS = 420;
+const LINE_DRAW_S = 0.55;
 
 export function stepDelay(index: number): number {
   return index * (STEP_MS / 1000);
 }
+
+/** Title fade begins as early connections form. */
+export const HERO_TITLE_DELAY_S = stepDelay(2);
+
+/** Title fade ends as the final constellation line completes. */
+export const HERO_TITLE_DURATION_S =
+  stepDelay(BUILD_SEQUENCE.length - 1) + LINE_DRAW_S - HERO_TITLE_DELAY_S;
 
 export function lineLength(a: Star, b: Star, size = 400): number {
   const dx = (b.x - a.x) * size;

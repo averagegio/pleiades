@@ -80,7 +80,7 @@ export function OrbitPicker({ value, onChange, disabled = false }: OrbitPickerPr
         </svg>
       </div>
 
-      <div className="rounded-lg border border-white/10 bg-zinc-950/80 px-4 py-3 text-center">
+      <div className="px-4 py-3 text-center">
         <p className="text-xs font-medium uppercase tracking-widest text-zinc-500">
           {selected.name} · {selected.feature}
         </p>
