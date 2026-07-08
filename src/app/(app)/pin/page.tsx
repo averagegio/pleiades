@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PinHowTo, PinSchematicHero } from "@/components/how-to/PinHowTo";
+import { PinLifestyleMockup } from "@/components/PinLifestyleMockup";
 
 const PREORDER_MAILTO =
   "mailto:preorder@pleiades.app?subject=Pleiades%20Pin%20Pre-order&body=I%20would%20like%20to%20pre-order%20the%20Pleiades%20Pin.";
@@ -64,6 +65,8 @@ export default function PinPage() {
             </div>
           </div>
         </div>
+
+        <PinLifestyleMockup />
 
         <PinHowTo />
 
