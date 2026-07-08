@@ -1,5 +1,5 @@
-import { WatchList } from "@/components/WatchList";
+import { redirect } from "next/navigation";
 
 export default function HomePage() {
-  return <WatchList />;
+  redirect("/#watch");
 }

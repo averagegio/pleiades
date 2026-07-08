@@ -7,6 +7,10 @@ export type Star = {
   brightness: number;
 };
 
+export type BuildStep =
+  | { kind: "star"; id: string }
+  | { kind: "line"; from: string; to: string };
+
 /** Normalized 0–1 positions approximating the Pleiades cluster. */
 export const PLEIADES_STARS: Star[] = [
   { id: "alcyone", name: "Alcyone", x: 0.5, y: 0.48, radius: 5, brightness: 1 },
@@ -32,6 +36,40 @@ export const PLEIADES_EDGES: [string, string][] = [
   ["electra", "pleione"],
   ["maia", "merope"],
 ];
+
+/** One star at a time, each line drawing before the next star appears. */
+export const BUILD_SEQUENCE: BuildStep[] = [
+  { kind: "star", id: "alcyone" },
+  { kind: "line", from: "alcyone", to: "atlas" },
+  { kind: "star", id: "atlas" },
+  { kind: "line", from: "alcyone", to: "electra" },
+  { kind: "star", id: "electra" },
+  { kind: "line", from: "alcyone", to: "maia" },
+  { kind: "star", id: "maia" },
+  { kind: "line", from: "alcyone", to: "merope" },
+  { kind: "star", id: "merope" },
+  { kind: "line", from: "alcyone", to: "taygeta" },
+  { kind: "star", id: "taygeta" },
+  { kind: "line", from: "alcyone", to: "pleione" },
+  { kind: "star", id: "pleione" },
+  { kind: "line", from: "atlas", to: "taygeta" },
+  { kind: "line", from: "atlas", to: "maia" },
+  { kind: "line", from: "electra", to: "merope" },
+  { kind: "line", from: "electra", to: "pleione" },
+  { kind: "line", from: "maia", to: "merope" },
+];
+
+const STEP_MS = 420;
+
+export function stepDelay(index: number): number {
+  return index * (STEP_MS / 1000);
+}
+
+export function lineLength(a: Star, b: Star, size = 400): number {
+  const dx = (b.x - a.x) * size;
+  const dy = (b.y - a.y) * size;
+  return Math.hypot(dx, dy);
+}
 
 export function getStarById(id: string): Star | undefined {
   return PLEIADES_STARS.find((s) => s.id === id);
