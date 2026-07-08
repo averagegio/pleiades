@@ -2,6 +2,7 @@ export type NavPage = {
   href: string;
   label: string;
   hash?: string;
+  search?: string;
 };
 
 export const NAV_PAGES: NavPage[] = [
@@ -10,6 +11,17 @@ export const NAV_PAGES: NavPage[] = [
   { href: "/about", label: "About" },
 ];
 
+export const LEGAL_PAGES: NavPage[] = [
+  { href: "/privacy", label: "Privacy" },
+  { href: "/terms", label: "Terms" },
+  { href: "/safety", label: "Safety" },
+];
+
 export function navHref(page: NavPage): string {
-  return page.hash ? `${page.href}${page.hash}` : page.href;
+  const base = page.hash ? `${page.href}${page.hash}` : page.href;
+  return page.search ? `${page.href}?${page.search}${page.hash ?? ""}` : base;
+}
+
+export function orbitHref(orbitId: string): string {
+  return `/?orbit=${orbitId}#watch`;
 }
