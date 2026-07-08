@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { DemoVideo } from "@/components/DemoVideo";
-import { PinMockup } from "@/components/PinMockup";
+import { PinHowTo, PinSchematicHero } from "@/components/how-to/PinHowTo";
 
 const PREORDER_MAILTO =
   "mailto:preorder@pleiades.app?subject=Pleiades%20Pin%20Pre-order&body=I%20would%20like%20to%20pre-order%20the%20Pleiades%20Pin.";
@@ -17,31 +16,33 @@ export default function PinPage() {
             Pleiades Pin
           </h1>
           <p className="mx-auto max-w-lg text-zinc-400">
-            One tap captures a spark. Your constellation grows in the app — no
-            phone out, no awkward moment.
+            A star-shaped tap to capture a spark. Your constellation grows in
+            the app — no phone out, no awkward moment.
           </p>
         </header>
 
-        <div className="flex flex-col items-center gap-12 lg:flex-row lg:justify-between">
-          <PinMockup className="lg:w-1/2" />
+        <div className="flex flex-col items-center gap-12 lg:flex-row lg:items-start lg:justify-between">
+          <div className="lg:w-1/2">
+            <PinSchematicHero />
+          </div>
 
           <div className="flex max-w-md flex-col gap-6 lg:w-1/2">
             <ul className="flex flex-col gap-4 text-sm text-zinc-400">
               <li className="flex gap-3">
                 <span className="text-zinc-200">✦</span>
-                Single press logs a spark — open the app later to name your star
+                Star form factor — wear it, tap the lower point
               </li>
               <li className="flex gap-3">
                 <span className="text-zinc-200">✦</span>
-                Soft blue LED confirms the moment without a screen
+                Center LED confirms each spark
               </li>
               <li className="flex gap-3">
                 <span className="text-zinc-200">✦</span>
-                BLE syncs with Pleiades on your phone
+                BLE syncs to Electra orbit in the app
               </li>
               <li className="flex gap-3">
                 <span className="text-zinc-200">✦</span>
-                Private by design — the pin records your intent, not other people
+                Private by design — intent only, not surveillance
               </li>
             </ul>
 
@@ -64,29 +65,7 @@ export default function PinPage() {
           </div>
         </div>
 
-        <section className="rounded-xl border border-white/10 bg-zinc-950/50 p-8">
-          <h2 className="text-lg font-medium">How it works</h2>
-          <ol className="mt-4 flex flex-col gap-3 text-sm text-zinc-400">
-            <li>
-              <strong className="text-zinc-200">1. Tap</strong> — Someone
-              catches your eye. Press the pin.
-            </li>
-            <li>
-              <strong className="text-zinc-200">2. Sync</strong> — The spark
-              appears in Electra (Sparks) orbit when you open the app.
-            </li>
-            <li>
-              <strong className="text-zinc-200">3. Connect</strong> — Name your
-              star, assign a sister orbit, watch your constellation grow.
-            </li>
-          </ol>
-        </section>
-
-        <DemoVideo
-          title="See the pin in action"
-          description="A quick walkthrough of the Pleiades Pin product page, features, and pre-order flow."
-          src="/demos/pin-demo.mp4"
-        />
+        <PinHowTo />
 
         <p className="text-center text-sm text-zinc-600">
           <Link href="/" className="underline hover:text-zinc-400">

@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useRef, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { ConstellationBackground } from "@/components/ConstellationBackground";
-import { DemoVideo } from "@/components/DemoVideo";
+import { WatchListHowTo } from "@/components/how-to/WatchListHowTo";
 import { PleiadesHero } from "@/components/PleiadesHero";
 import { ScrollIndicator } from "@/components/ScrollIndicator";
 import { WatchList } from "@/components/WatchList";
@@ -104,11 +104,7 @@ function IntroScrollExperience() {
             onStarAdded={setHighlightId}
           />
           <div className="relative z-10 mx-auto w-full max-w-2xl px-6 pb-24 pt-8">
-            <DemoVideo
-              title="How to add people"
-              description="Pick a sister orbit, add a nickname and note — your constellation connects in the background."
-              src="/demos/watchlist-demo.mp4"
-            />
+            <WatchListHowTo />
           </div>
         </section>
       </div>
