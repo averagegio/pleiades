@@ -1,18 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getPublicJournalBySlug, listPublicJournals } from "@/lib/journal";
+import { getPublicJournalBySlug } from "@/lib/journal";
+
+export const dynamic = "force-dynamic";
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
-
-export async function generateStaticParams() {
-  const entries = await listPublicJournals();
-  return entries
-    .filter((e) => e.slug)
-    .map((e) => ({ slug: e.slug as string }));
-}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
