@@ -1,9 +1,7 @@
 import Link from "next/link";
+import { CheckoutButton } from "@/components/CheckoutButton";
 import { PinHowTo, PinSchematicHero } from "@/components/how-to/PinHowTo";
 import { PinLifestyleMockup } from "@/components/PinLifestyleMockup";
-
-const PREORDER_MAILTO =
-  "mailto:preorder@pleiades.app?subject=Pleiades%20Pin%20Pre-order&body=I%20would%20like%20to%20pre-order%20the%20Pleiades%20Pin.";
 
 export default function PinPage() {
   return (
@@ -47,21 +45,14 @@ export default function PinPage() {
               </li>
             </ul>
 
-            <div className="rounded-xl border border-white/10 bg-zinc-950 p-5">
+            <div id="preorder" className="rounded-xl border border-white/10 bg-zinc-950 p-5">
               <p className="text-2xl font-semibold">$49</p>
               <p className="mt-1 text-sm text-zinc-500">
                 Early bird pre-order · ships Q4 2026
               </p>
-              <a
-                href={PREORDER_MAILTO}
-                id="preorder"
-                className="mt-5 flex h-12 items-center justify-center rounded-full bg-zinc-50 text-sm font-medium text-black transition-colors hover:bg-zinc-300"
-              >
-                Pre-order now
-              </a>
-              <p className="mt-3 text-center text-xs text-zinc-600">
-                No payment collected yet — we&apos;ll confirm your spot by email.
-              </p>
+              <div className="mt-5">
+                <CheckoutButton />
+              </div>
             </div>
           </div>
         </div>
