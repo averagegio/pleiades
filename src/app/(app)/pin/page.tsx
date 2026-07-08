@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DemoVideo } from "@/components/DemoVideo";
 import { PinMockup } from "@/components/PinMockup";
 
 const PREORDER_MAILTO =
@@ -80,6 +81,12 @@ export default function PinPage() {
             </li>
           </ol>
         </section>
+
+        <DemoVideo
+          title="See the pin in action"
+          description="A quick walkthrough of the Pleiades Pin product page, features, and pre-order flow."
+          src="/demos/pin-demo.mp4"
+        />
 
         <p className="text-center text-sm text-zinc-600">
           <Link href="/" className="underline hover:text-zinc-400">
