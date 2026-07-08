@@ -17,8 +17,8 @@ export default function PinPage() {
             Pleiades Pin
           </h1>
           <p className="mx-auto max-w-lg text-zinc-400">
-            A star-shaped tap to capture a spark. Your constellation grows in
-            the app — no phone out, no awkward moment.
+            A brushed-metal disc with a star LED. One tap to capture a spark —
+            your constellation grows in the app, no phone out, no awkward moment.
           </p>
         </header>
 
@@ -31,11 +31,11 @@ export default function PinPage() {
             <ul className="flex flex-col gap-4 text-sm text-zinc-400">
               <li className="flex gap-3">
                 <span className="text-zinc-200">✦</span>
-                Star form factor — wear it, tap the lower point
+                Minimal circular disc — wear it, tap once
               </li>
               <li className="flex gap-3">
                 <span className="text-zinc-200">✦</span>
-                Center LED confirms each spark
+                Star-shaped LED confirms each spark
               </li>
               <li className="flex gap-3">
                 <span className="text-zinc-200">✦</span>
