@@ -1,8 +1,7 @@
 "use client";
 
-import Image from "next/image";
-import { useState } from "react";
 import { MobileHowTo } from "@/components/MobileHowTo";
+import { PinProductHero } from "@/components/PinProductHero";
 import { StarPinSchematic } from "@/components/StarPinSchematic";
 import type { HowToStep } from "@/components/how-to/types";
 
@@ -72,49 +71,7 @@ export function PinHowTo() {
   return <PinHowToInner />;
 }
 
-const PART_DESCRIPTIONS = {
-  led: "Star-shaped LED at center — confirms each spark",
-  button: "Side tap button — single press to capture",
-  ble: "BLE module — syncs when you're back in the app",
-  clasp: "Butterfly clasp — stays on all day",
-} as const;
-
-/** Hero product photo for the pin page */
+/** Hero product photo with interactive part hotspots */
 export function PinSchematicHero() {
-  const [part, setPart] = useState<"led" | "button" | "ble" | "clasp">("led");
-  const parts = ["led", "button", "ble", "clasp"] as const;
-
-  return (
-    <div className="flex flex-col items-center gap-4">
-      <div className="relative w-full max-w-[360px] overflow-hidden rounded-2xl bg-black">
-        <Image
-          src="/images/pin/product-hero.png"
-          alt="Pleiades Pin — circular brushed-metal disc with glowing star LED"
-          width={1024}
-          height={1024}
-          className="h-auto w-full"
-          priority
-        />
-      </div>
-      <div className="flex flex-wrap justify-center gap-2">
-        {parts.map((p) => (
-          <button
-            key={p}
-            type="button"
-            onClick={() => setPart(p)}
-            className={`rounded-full border px-3 py-1 text-[10px] uppercase tracking-wider transition-colors ${
-              part === p
-                ? "border-blue-300/50 text-blue-200"
-                : "border-white/10 text-zinc-600 hover:text-zinc-400"
-            }`}
-          >
-            {p === "led" ? "star led" : p}
-          </button>
-        ))}
-      </div>
-      <p className="max-w-xs text-center text-sm text-zinc-500">
-        {PART_DESCRIPTIONS[part]}
-      </p>
-    </div>
-  );
+  return <PinProductHero />;
 }
