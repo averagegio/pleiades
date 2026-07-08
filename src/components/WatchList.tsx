@@ -1,95 +1,209 @@
 "use client";
 
-import { useState } from "react";
-
-type Person = {
-  id: number;
-  name: string;
-  note: string;
-};
+import { useCallback, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { OrbitPicker } from "@/components/OrbitPicker";
+import {
+  DEFAULT_ORBIT,
+  getOrbitById,
+  SISTER_ORBITS,
+  type SisterOrbitId,
+} from "@/lib/sister-orbits";
+import { isVaultOrbit, useWatchedStars } from "@/lib/watched-stars";
 
 export function WatchList() {
-  const [people, setPeople] = useState<Person[]>([]);
+  const searchParams = useSearchParams();
+  const orbitFilter = searchParams.get("orbit") as SisterOrbitId | null;
+  const validFilter =
+    orbitFilter && SISTER_ORBITS.some((o) => o.id === orbitFilter)
+      ? orbitFilter
+      : null;
+
+  const [stars, setStars] = useWatchedStars();
   const [name, setName] = useState("");
   const [note, setNote] = useState("");
+  const [manualOrbit, setManualOrbit] = useState<SisterOrbitId>(DEFAULT_ORBIT);
+  const [brightness, setBrightness] = useState(0.7);
+  const [revealed, setRevealed] = useState<Set<number>>(new Set());
 
-  function addPerson(e: React.FormEvent) {
-    e.preventDefault();
-    const trimmed = name.trim();
-    if (!trimmed) return;
-    setPeople((prev) => [
-      { id: Date.now(), name: trimmed, note: note.trim() },
-      ...prev,
-    ]);
-    setName("");
-    setNote("");
+  const orbit = validFilter ?? manualOrbit;
+
+  const addStar = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      const trimmed = name.trim();
+      if (!trimmed) return;
+
+      setStars((prev) => [
+        {
+          id: Date.now(),
+          name: trimmed,
+          note: note.trim(),
+          orbit,
+          brightness: orbit === "alcyone" ? brightness : 0.5,
+          createdAt: new Date().toISOString(),
+        },
+        ...prev,
+      ]);
+      setName("");
+      setNote("");
+      setBrightness(0.7);
+    },
+    [name, note, orbit, brightness, setStars],
+  );
+
+  function removeStar(id: number) {
+    setStars((prev) => prev.filter((s) => s.id !== id));
+    setRevealed((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
   }
 
-  function removePerson(id: number) {
-    setPeople((prev) => prev.filter((p) => p.id !== id));
+  function toggleReveal(id: number) {
+    setRevealed((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
   }
+
+  const filtered = validFilter
+    ? stars.filter((s) => s.orbit === validFilter)
+    : stars.filter((s) => s.orbit !== "celaeno");
+
+  const activeFilter = validFilter ? getOrbitById(validFilter) : null;
 
   return (
     <div className="flex flex-col flex-1 items-center bg-black font-sans text-zinc-50">
       <main className="flex flex-1 w-full max-w-2xl flex-col gap-8 px-6 py-16 pt-28">
-        <header>
-          <h1 className="text-3xl font-semibold tracking-tight">Watch list</h1>
+        <header className="flex flex-col gap-2">
+          <h1 className="text-3xl font-semibold tracking-tight">
+            {activeFilter ? `${activeFilter.name} · ${activeFilter.feature}` : "Watch list"}
+          </h1>
+          {activeFilter && (
+            <p className="text-sm text-zinc-500">{activeFilter.description}</p>
+          )}
         </header>
 
         <form
-          onSubmit={addPerson}
-          className="flex flex-col gap-3 rounded-xl border border-white/10 bg-zinc-950 p-4"
+          onSubmit={addStar}
+          className="flex flex-col gap-4 rounded-xl border border-white/10 bg-zinc-950 p-4"
         >
+          <OrbitPicker
+            value={orbit}
+            onChange={setManualOrbit}
+            disabled={!!validFilter}
+          />
+
+          {orbit === "sterope" && (
+            <p className="rounded-lg border border-amber-500/20 bg-amber-500/5 px-3 py-2 text-xs text-amber-200/80">
+              Public sky: only note public personas. No private addresses or
+              doxxing.
+            </p>
+          )}
+
           <input
-            aria-label="Person name"
+            aria-label="Star name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Who are you watching?"
+            placeholder="Nickname or name"
             className="h-11 rounded-lg border border-white/10 bg-black px-3 text-base text-zinc-50 outline-none focus:border-white/25"
           />
           <input
             aria-label="Note"
             value={note}
             onChange={(e) => setNote(e.target.value)}
-            placeholder="Add a note (optional)"
+            placeholder="Your private note (optional)"
             className="h-11 rounded-lg border border-white/10 bg-black px-3 text-base text-zinc-50 outline-none focus:border-white/25"
           />
+
+          {orbit === "alcyone" && (
+            <label className="flex flex-col gap-2 text-sm text-zinc-400">
+              Brightness
+              <input
+                type="range"
+                min={0.2}
+                max={1}
+                step={0.1}
+                value={brightness}
+                onChange={(e) => setBrightness(Number(e.target.value))}
+                className="accent-zinc-50"
+              />
+            </label>
+          )}
+
           <button
             type="submit"
             className="h-11 rounded-full bg-zinc-50 px-5 font-medium text-black transition-colors hover:bg-zinc-300"
           >
-            Add person
+            Add star
           </button>
         </form>
 
         <section className="flex flex-col gap-3">
           <h2 className="text-sm font-medium uppercase tracking-wide text-zinc-500">
-            Watching ({people.length})
+            Stars ({filtered.length})
           </h2>
-          {people.length === 0 ? (
-            <p className="text-zinc-600">No one yet. Add someone above.</p>
+          {filtered.length === 0 ? (
+            <p className="text-zinc-600">
+              No stars in this orbit yet. Pick a sister above and add one.
+            </p>
           ) : (
             <ul className="flex flex-col gap-2">
-              {people.map((p) => (
-                <li
-                  key={p.id}
-                  className="flex items-center justify-between gap-4 rounded-lg border border-white/10 bg-zinc-950 px-4 py-3"
-                >
-                  <div className="flex flex-col">
-                    <span className="font-medium">{p.name}</span>
-                    {p.note && (
-                      <span className="text-sm text-zinc-500">{p.note}</span>
-                    )}
-                  </div>
-                  <button
-                    onClick={() => removePerson(p.id)}
-                    className="text-sm text-zinc-500 hover:text-red-400"
-                    aria-label={`Remove ${p.name}`}
+              {filtered.map((star) => {
+                const orbitMeta = getOrbitById(star.orbit);
+                const vault = isVaultOrbit(star.orbit);
+                const hidden = vault && !revealed.has(star.id);
+
+                return (
+                  <li
+                    key={star.id}
+                    className="flex items-center justify-between gap-4 rounded-lg border border-white/10 bg-zinc-950 px-4 py-3"
                   >
-                    Remove
-                  </button>
-                </li>
-              ))}
+                    <div className="flex min-w-0 flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="font-medium"
+                          style={{
+                            opacity: star.orbit === "alcyone" ? star.brightness : 1,
+                          }}
+                        >
+                          {hidden ? "••••••" : star.name}
+                        </span>
+                        <span className="shrink-0 rounded-full border border-white/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-zinc-500">
+                          {orbitMeta.name}
+                        </span>
+                      </div>
+                      {star.note && (
+                        <span className={`text-sm text-zinc-500 ${hidden ? "blur-sm select-none" : ""}`}>
+                          {hidden ? "Hidden note" : star.note}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex shrink-0 items-center gap-3">
+                      {vault && (
+                        <button
+                          onClick={() => toggleReveal(star.id)}
+                          className="text-sm text-zinc-500 hover:text-zinc-300"
+                          aria-label={hidden ? "Reveal star" : "Hide star"}
+                        >
+                          {hidden ? "Show" : "Hide"}
+                        </button>
+                      )}
+                      <button
+                        onClick={() => removeStar(star.id)}
+                        className="text-sm text-zinc-500 hover:text-red-400"
+                        aria-label={`Remove ${star.name}`}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           )}
         </section>

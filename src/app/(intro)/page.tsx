@@ -1,10 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { PleiadesHero } from "@/components/PleiadesHero";
 import { ScrollIndicator } from "@/components/ScrollIndicator";
 import { WatchList } from "@/components/WatchList";
+
+function WatchListFallback() {
+  return (
+    <div className="flex min-h-dvh items-center justify-center bg-black pt-28 text-zinc-600">
+      Loading stars…
+    </div>
+  );
+}
 
 export default function IntroPage() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -28,7 +36,7 @@ export default function IntroPage() {
   }, []);
 
   useEffect(() => {
-    if (window.location.hash === "#watch") {
+    if (window.location.hash === "#watch" || window.location.search.includes("orbit=")) {
       document.getElementById("watch")?.scrollIntoView({ behavior: "smooth" });
     }
   }, []);
@@ -65,7 +73,9 @@ export default function IntroPage() {
             }}
             aria-hidden="true"
           />
-          <WatchList />
+          <Suspense fallback={<WatchListFallback />}>
+            <WatchList />
+          </Suspense>
         </section>
       </div>
     </AppShell>
