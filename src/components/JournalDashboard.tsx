@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState, useSyncExternalStore } from "react";
 import { SISTER_ORBITS, type SisterOrbitId } from "@/lib/sister-orbits";
 import { useAuth } from "@/lib/use-auth";
 import type { JournalEntry } from "@/lib/types";
@@ -14,10 +14,98 @@ type Stats = {
   avgSeoScore: number | null;
 };
 
+type JournalSnapshot = {
+  entries: JournalEntry[];
+  stats: Stats | null;
+  loading: boolean;
+  userId: string | null;
+};
+
+let journalSnapshot: JournalSnapshot = {
+  entries: [],
+  stats: null,
+  loading: false,
+  userId: null,
+};
+let journalPromise: Promise<void> | null = null;
+const journalListeners = new Set<() => void>();
+
+function emitJournal() {
+  for (const listener of journalListeners) listener();
+}
+
+function subscribeJournal(listener: () => void) {
+  journalListeners.add(listener);
+  return () => journalListeners.delete(listener);
+}
+
+function getJournalSnapshot() {
+  return journalSnapshot;
+}
+
+async function fetchJournals(userId: string) {
+  try {
+    const res = await fetch("/api/journal", { cache: "no-store" });
+    if (!res.ok) {
+      journalSnapshot = {
+        entries: [],
+        stats: null,
+        loading: false,
+        userId,
+      };
+    } else {
+      const data = (await res.json()) as {
+        entries: JournalEntry[];
+        stats: Stats;
+      };
+      journalSnapshot = {
+        entries: data.entries,
+        stats: data.stats,
+        loading: false,
+        userId,
+      };
+    }
+  } catch {
+    journalSnapshot = {
+      entries: [],
+      stats: null,
+      loading: false,
+      userId,
+    };
+  }
+  emitJournal();
+}
+
+function requestJournals(userId: string | null) {
+  if (!userId) {
+    if (journalSnapshot.userId !== null) {
+      journalSnapshot = {
+        entries: [],
+        stats: null,
+        loading: false,
+        userId: null,
+      };
+      queueMicrotask(emitJournal);
+    }
+    return;
+  }
+  if (journalSnapshot.userId === userId || journalPromise) return;
+  journalSnapshot = { ...journalSnapshot, loading: true, userId };
+  queueMicrotask(emitJournal);
+  journalPromise = fetchJournals(userId).finally(() => {
+    journalPromise = null;
+  });
+}
+
 export function JournalDashboard() {
   const { user, loading: authLoading } = useAuth();
-  const [entries, setEntries] = useState<JournalEntry[]>([]);
-  const [stats, setStats] = useState<Stats | null>(null);
+  requestJournals(user?.id ?? null);
+  const journal = useSyncExternalStore(
+    subscribeJournal,
+    getJournalSnapshot,
+    getJournalSnapshot,
+  );
+
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [orbit, setOrbit] = useState<SisterOrbitId>("electra");
@@ -27,21 +115,13 @@ export function JournalDashboard() {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const load = useCallback(async () => {
-    const res = await fetch("/api/journal", { cache: "no-store" });
-    if (!res.ok) {
-      setEntries([]);
-      setStats(null);
-      return;
-    }
-    const data = (await res.json()) as { entries: JournalEntry[]; stats: Stats };
-    setEntries(data.entries);
-    setStats(data.stats);
-  }, []);
-
-  useEffect(() => {
-    if (user) void load();
-  }, [user, load]);
+  const reload = useCallback(async () => {
+    if (!user) return;
+    journalPromise = fetchJournals(user.id).finally(() => {
+      journalPromise = null;
+    });
+    await journalPromise;
+  }, [user]);
 
   async function createEntry(e: React.FormEvent) {
     e.preventDefault();
@@ -59,7 +139,7 @@ export function JournalDashboard() {
       setTitle("");
       setBody("");
       setMessage("Journal entry saved.");
-      await load();
+      await reload();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Create failed");
     } finally {
@@ -88,7 +168,7 @@ export function JournalDashboard() {
           data.publicPath ? `) · live at ${data.publicPath}` : ")"
         }`,
       );
-      await load();
+      await reload();
     } catch (err) {
       setError(err instanceof Error ? err.message : "SEO failed");
     } finally {
@@ -129,7 +209,7 @@ export function JournalDashboard() {
     await fetch(`/api/journal?id=${encodeURIComponent(id)}`, {
       method: "DELETE",
     });
-    await load();
+    await reload();
   }
 
   if (authLoading) {
@@ -157,6 +237,8 @@ export function JournalDashboard() {
       </div>
     );
   }
+
+  const { entries, stats } = journal;
 
   return (
     <div className="flex flex-col gap-10">
@@ -247,7 +329,9 @@ export function JournalDashboard() {
           </Link>
         </div>
 
-        {entries.length === 0 ? (
+        {journal.loading && entries.length === 0 ? (
+          <p className="text-sm text-zinc-500">Loading entries…</p>
+        ) : entries.length === 0 ? (
           <p className="text-sm text-zinc-500">No entries yet.</p>
         ) : (
           <ul className="flex flex-col gap-4">

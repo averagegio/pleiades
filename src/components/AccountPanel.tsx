@@ -2,30 +2,70 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { useAuth } from "@/lib/use-auth";
+
+type XStatusSnapshot = {
+  configured: boolean;
+  loadedFor: string | null;
+};
+
+let xSnapshot: XStatusSnapshot = { configured: false, loadedFor: null };
+let xPromise: Promise<void> | null = null;
+const xListeners = new Set<() => void>();
+
+function emitX() {
+  for (const listener of xListeners) listener();
+}
+
+function subscribeX(listener: () => void) {
+  xListeners.add(listener);
+  return () => xListeners.delete(listener);
+}
+
+function getXSnapshot() {
+  return xSnapshot;
+}
+
+async function fetchXStatus(key: string) {
+  try {
+    const res = await fetch("/api/x/status", { cache: "no-store" });
+    const data = (await res.json()) as { configured?: boolean };
+    xSnapshot = { configured: Boolean(data.configured), loadedFor: key };
+  } catch {
+    xSnapshot = { configured: false, loadedFor: key };
+  }
+  emitX();
+}
+
+function requestXStatus(key: string) {
+  if (xSnapshot.loadedFor === key || xPromise) return;
+  xPromise = fetchXStatus(key).finally(() => {
+    xPromise = null;
+  });
+}
 
 export function AccountPanel() {
   const { user, loading, logout, refresh } = useAuth();
   const searchParams = useSearchParams();
-  const xStatus = searchParams.get("x");
-  const [configured, setConfigured] = useState(false);
+  const xStatus = searchParams.get("x") ?? "idle";
+  const statusKey = `${user?.id ?? "anon"}:${xStatus}`;
+  requestXStatus(statusKey);
+  const { configured } = useSyncExternalStore(
+    subscribeX,
+    getXSnapshot,
+    getXSnapshot,
+  );
+
   const [composer, setComposer] = useState("");
   const [postMsg, setPostMsg] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  useEffect(() => {
-    void (async () => {
-      const res = await fetch("/api/x/status", { cache: "no-store" });
-      const data = (await res.json()) as { configured?: boolean };
-      setConfigured(Boolean(data.configured));
-      await refresh();
-    })();
-  }, [refresh, xStatus]);
-
   async function disconnectX() {
     await fetch("/api/x/status", { method: "DELETE" });
+    xSnapshot = { ...xSnapshot, loadedFor: null };
     await refresh();
+    await fetchXStatus(`${user?.id ?? "anon"}:idle`);
   }
 
   async function postCustom(e: React.FormEvent) {
