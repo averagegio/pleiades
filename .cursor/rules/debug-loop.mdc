@@ -1,0 +1,35 @@
+---
+description: Iterative debug subagent loop for fixing bugs and verifying UI behavior
+globs:
+alwaysApply: true
+---
+
+# Debug subagent loop
+
+When implementing features or fixing bugs in this repo, use the **debug** subagent in an iterative loop until the issue is resolved.
+
+## Loop workflow
+
+1. **Reproduce** — Start the dev server (`npm run dev`) and reproduce the bug or verify the feature manually.
+2. **Launch debug subagent** — Delegate investigation to a `debug` subagent with:
+   - The exact reproduction steps
+   - Expected vs actual behavior
+   - Relevant file paths
+3. **Apply fix** — Implement the fix the debug subagent identifies.
+4. **Verify** — Re-run reproduction steps. If still broken, return to step 2 (max 3 loops before reassessing approach).
+5. **Gate** — Before finishing, run `npm run lint` and `npm run build`.
+
+## When to trigger the loop
+
+- UI animations not rendering or misaligned (constellation hero, drawer transitions)
+- Route/navigation issues (intro → landing enter flow)
+- Hydration or client/server boundary errors
+- Any regression after structural changes
+
+## Pleiades-specific checks
+
+- Intro at `/` is full-bleed with constellation animation
+- Enter key and click both navigate to `/home`
+- Hamburger drawer opens/closes with backdrop, Escape, and focus trap
+- `prefers-reduced-motion` shows static constellation (no twinkle)
+- Landing page at `/home` retains people-watching functionality
