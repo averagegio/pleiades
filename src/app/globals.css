@@ -155,6 +155,43 @@ body {
   animation: constellation-fade-in 0.5s ease-out forwards;
 }
 
+@keyframes howto-slide-in-forward {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes howto-slide-in-back {
+  from {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.howto-slide-forward {
+  animation: howto-slide-in-forward 0.35s ease-out;
+}
+
+.howto-slide-back {
+  animation: howto-slide-in-back 0.35s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .howto-slide-forward,
+  .howto-slide-back {
+    animation: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .constellation-star,
   .constellation-glow,
