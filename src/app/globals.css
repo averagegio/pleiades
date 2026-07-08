@@ -100,6 +100,23 @@ body {
   animation: constellation-fade-in 0.5s ease-out forwards;
 }
 
+.pleiades-title {
+  opacity: 0;
+  animation: pleiades-title-fade var(--title-duration, 5s) ease-out forwards;
+  animation-delay: var(--title-delay, 1s);
+}
+
+@keyframes pleiades-title-fade {
+  from {
+    opacity: 0;
+    letter-spacing: 0.08em;
+  }
+  to {
+    opacity: 1;
+    letter-spacing: -0.02em;
+  }
+}
+
 .constellation-glow {
   animation: constellation-fade-in 0.65s ease-out forwards,
     pulse-slow 4s ease-in-out infinite;
@@ -144,10 +161,16 @@ body {
   .constellation-line-draw,
   .constellation-line,
   .constellation-link,
-  .constellation-link-new {
+  .constellation-link-new,
+  .pleiades-title {
     animation: none;
     opacity: var(--target-opacity, 1);
     stroke-dashoffset: 0;
+  }
+
+  .pleiades-title {
+    opacity: 1;
+    letter-spacing: -0.02em;
   }
 
   .constellation-line-draw,

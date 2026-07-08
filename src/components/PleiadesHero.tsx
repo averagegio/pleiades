@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useMemo } from "react";
+import { useMemo } from "react";
 import {
   BUILD_SEQUENCE,
   getStarById,
@@ -12,11 +12,9 @@ type PleiadesHeroProps = {
   className?: string;
 };
 
-const SIZE = 400;
+const SIZE = 520;
 
 export function PleiadesHero({ className = "" }: PleiadesHeroProps) {
-  const gradientId = useId();
-
   const { starDelays, lineDelays } = useMemo(() => {
     const starDelays = new Map<string, number>();
     const lineDelays = new Map<string, number>();
@@ -59,15 +57,6 @@ export function PleiadesHero({ className = "" }: PleiadesHeroProps) {
         aria-hidden="true"
         role="img"
       >
-        <defs>
-          <radialGradient id={gradientId} cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="rgba(147,197,253,0.2)" />
-            <stop offset="100%" stopColor="rgba(0,0,0,0)" />
-          </radialGradient>
-        </defs>
-
-        <rect width={SIZE} height={SIZE} fill={`url(#${gradientId})`} />
-
         {lines.map((edge) =>
           edge ? (
             <line
@@ -76,8 +65,8 @@ export function PleiadesHero({ className = "" }: PleiadesHeroProps) {
               y1={edge.a.y * SIZE}
               x2={edge.b.x * SIZE}
               y2={edge.b.y * SIZE}
-              stroke="rgba(228,228,231,0.35)"
-              strokeWidth="1"
+              stroke="rgba(228,228,231,0.4)"
+              strokeWidth="1.2"
               strokeDasharray={edge.len}
               strokeDashoffset={edge.len}
               className="constellation-line-draw"
@@ -98,34 +87,20 @@ export function PleiadesHero({ className = "" }: PleiadesHeroProps) {
           const delay = starDelays.get(star.id) ?? 0;
 
           return (
-            <g key={star.id}>
-              <circle
-                cx={star.x * SIZE}
-                cy={star.y * SIZE}
-                r={star.radius * 2.5}
-                fill="rgba(147,197,253,0.12)"
-                className="constellation-glow opacity-0"
-                style={
-                  {
-                    animationDelay: `${delay}s`,
-                    "--target-opacity": String(star.brightness * 0.5),
-                  } as React.CSSProperties
-                }
-              />
-              <circle
-                cx={star.x * SIZE}
-                cy={star.y * SIZE}
-                r={star.radius}
-                fill="white"
-                className="constellation-star opacity-0"
-                style={
-                  {
-                    animationDelay: `${delay}s`,
-                    "--target-opacity": String(star.brightness),
-                  } as React.CSSProperties
-                }
-              />
-            </g>
+            <circle
+              key={star.id}
+              cx={star.x * SIZE}
+              cy={star.y * SIZE}
+              r={star.radius * 1.15}
+              fill="white"
+              className="constellation-star opacity-0"
+              style={
+                {
+                  animationDelay: `${delay}s`,
+                  "--target-opacity": String(star.brightness),
+                } as React.CSSProperties
+              }
+            />
           );
         })}
       </svg>

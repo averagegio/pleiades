@@ -6,6 +6,7 @@ import { ConstellationBackground } from "@/components/ConstellationBackground";
 import { PleiadesHero } from "@/components/PleiadesHero";
 import { ScrollIndicator } from "@/components/ScrollIndicator";
 import { WatchList } from "@/components/WatchList";
+import { HERO_TITLE_DELAY_S, HERO_TITLE_DURATION_S } from "@/lib/pleiades-stars";
 import { useWatchedStars } from "@/lib/watched-stars";
 
 function WatchListFallback() {
@@ -64,13 +65,21 @@ function IntroScrollExperience() {
       >
         <section
           id="intro"
-          className="relative flex h-dvh snap-start snap-always flex-col items-center justify-center bg-black/40"
+          className="relative flex h-dvh snap-start snap-always flex-col items-center justify-center bg-transparent"
         >
-          <div className="flex w-full max-w-lg flex-col items-center gap-10 px-6">
-            <div className="h-64 w-64 sm:h-80 sm:w-80">
+          <div className="flex w-full max-w-3xl flex-col items-center gap-12 px-6">
+            <div className="h-[22rem] w-[22rem] sm:h-[28rem] sm:w-[28rem]">
               <PleiadesHero className="h-full w-full" />
             </div>
-            <h1 className="text-5xl font-semibold tracking-tight text-zinc-50 sm:text-7xl">
+            <h1
+              className="pleiades-title text-5xl font-semibold tracking-tight text-zinc-50 sm:text-7xl"
+              style={
+                {
+                  "--title-delay": `${HERO_TITLE_DELAY_S}s`,
+                  "--title-duration": `${HERO_TITLE_DURATION_S}s`,
+                } as React.CSSProperties
+              }
+            >
               Pleiades
             </h1>
           </div>
