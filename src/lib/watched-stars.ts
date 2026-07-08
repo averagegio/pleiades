@@ -12,17 +12,38 @@ export type WatchedStar = {
 
 const STORAGE_KEY = "pleiades-stars";
 const STAR_EVENT = "pleiades-stars-change";
+const EMPTY: WatchedStar[] = [];
+
+let cachedRaw: string | null | undefined;
+let cachedSnapshot: WatchedStar[] = EMPTY;
+
+function invalidateCache(): void {
+  cachedRaw = undefined;
+}
 
 function getSnapshot(): WatchedStar[] {
-  if (typeof window === "undefined") return [];
+  if (typeof window === "undefined") return EMPTY;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
+    if (raw === cachedRaw) return cachedSnapshot;
+
+    cachedRaw = raw;
+    if (!raw) {
+      cachedSnapshot = EMPTY;
+      return cachedSnapshot;
+    }
+
     const parsed = JSON.parse(raw) as WatchedStar[];
-    return Array.isArray(parsed) ? parsed : [];
+    cachedSnapshot = Array.isArray(parsed) ? parsed : EMPTY;
+    return cachedSnapshot;
   } catch {
-    return [];
+    cachedSnapshot = EMPTY;
+    return cachedSnapshot;
   }
+}
+
+function getServerSnapshot(): WatchedStar[] {
+  return EMPTY;
 }
 
 function subscribe(callback: () => void): () => void {
@@ -35,6 +56,7 @@ function subscribe(callback: () => void): () => void {
 }
 
 function emitChange(): void {
+  invalidateCache();
   window.dispatchEvent(new Event(STAR_EVENT));
 }
 
@@ -44,7 +66,11 @@ function saveStars(stars: WatchedStar[]): void {
 }
 
 export function useWatchedStars() {
-  const stars = useSyncExternalStore(subscribe, getSnapshot, () => []);
+  const stars = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
+  );
 
   const setStars = useCallback(
     (updater: (prev: WatchedStar[]) => WatchedStar[]) => {
