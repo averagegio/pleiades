@@ -18,13 +18,6 @@ export async function POST(request: Request) {
     const user = await getSessionUser();
     if (!user) throw new AuthError("Sign in required");
 
-    if (!user.xConnected || !user.xAccessToken) {
-      return NextResponse.json(
-        { error: "Connect your X account first" },
-        { status: 400 },
-      );
-    }
-
     const body = (await request.json()) as {
       journalId?: string;
       text?: string;
@@ -55,13 +48,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Post text required" }, { status: 400 });
     }
 
-    if (!xConfigured()) {
-      // Demo mode: accept the post without calling X.
+    // Demo mode when X app credentials are missing, or the user has not
+    // completed OAuth yet — still returns a composed tweet preview.
+    if (!xConfigured() || !user.xConnected || !user.xAccessToken) {
       return NextResponse.json({
         mode: "demo",
         tweet: { id: `demo_${Date.now()}`, text },
-        message:
-          "X credentials are not configured. Previewed the post locally.",
+        message: !xConfigured()
+          ? "X credentials are not configured. Previewed the post locally."
+          : "Connect X in Account to publish live. Previewed the post locally.",
       });
     }
 

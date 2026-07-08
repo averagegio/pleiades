@@ -183,8 +183,12 @@ export async function runSeoAgentLoop(
     slug,
   });
   let iterations = 0;
+  const minPasses = 2;
 
-  while (iterations < maxIterations && best.score < targetScore) {
+  while (
+    iterations < maxIterations &&
+    (iterations < minPasses || best.score < targetScore)
+  ) {
     iterations += 1;
 
     if (iterations === 1) {
@@ -195,11 +199,13 @@ export async function runSeoAgentLoop(
         title.length <= 52
           ? `${title} | Pleiades Journal`
           : `${title.slice(0, 48)} | Pleiades`;
+      metaDescription = buildMetaDescription(title, body);
     }
 
     if (iterations === 2) {
       body = ensureHeadings(title, body, keywords);
       keywords = extractKeywords(`${title} ${body}`);
+      metaDescription = buildMetaDescription(title, body);
     }
 
     if (iterations >= 3) {
