@@ -8,6 +8,7 @@ export type NavPage = {
 export const NAV_PAGES: NavPage[] = [
   { href: "/", label: "Intro" },
   { href: "/", label: "Watch list", hash: "#watch" },
+  { href: "/pin", label: "Pin" },
   { href: "/about", label: "About" },
 ];
 

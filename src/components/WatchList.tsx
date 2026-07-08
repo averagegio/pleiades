@@ -9,9 +9,23 @@ import {
   SISTER_ORBITS,
   type SisterOrbitId,
 } from "@/lib/sister-orbits";
-import { isVaultOrbit, useWatchedStars } from "@/lib/watched-stars";
+import {
+  isVaultOrbit,
+  useWatchedStars,
+  type WatchedStar,
+} from "@/lib/watched-stars";
 
-export function WatchList() {
+type WatchListProps = {
+  stars?: WatchedStar[];
+  setStars?: (updater: (prev: WatchedStar[]) => WatchedStar[]) => void;
+  onStarAdded?: (id: number) => void;
+};
+
+export function WatchList({
+  stars: controlledStars,
+  setStars: controlledSetStars,
+  onStarAdded,
+}: WatchListProps = {}) {
   const searchParams = useSearchParams();
   const orbitFilter = searchParams.get("orbit") as SisterOrbitId | null;
   const validFilter =
@@ -19,7 +33,10 @@ export function WatchList() {
       ? orbitFilter
       : null;
 
-  const [stars, setStars] = useWatchedStars();
+  const [internalStars, internalSetStars] = useWatchedStars();
+  const stars = controlledStars ?? internalStars;
+  const setStars = controlledSetStars ?? internalSetStars;
+
   const [name, setName] = useState("");
   const [note, setNote] = useState("");
   const [manualOrbit, setManualOrbit] = useState<SisterOrbitId>(DEFAULT_ORBIT);
@@ -34,9 +51,10 @@ export function WatchList() {
       const trimmed = name.trim();
       if (!trimmed) return;
 
+      const id = Date.now();
       setStars((prev) => [
         {
-          id: Date.now(),
+          id,
           name: trimmed,
           note: note.trim(),
           orbit,
@@ -45,11 +63,12 @@ export function WatchList() {
         },
         ...prev,
       ]);
+      onStarAdded?.(id);
       setName("");
       setNote("");
       setBrightness(0.7);
     },
-    [name, note, orbit, brightness, setStars],
+    [name, note, orbit, brightness, setStars, onStarAdded],
   );
 
   function removeStar(id: number) {
@@ -77,7 +96,7 @@ export function WatchList() {
   const activeFilter = validFilter ? getOrbitById(validFilter) : null;
 
   return (
-    <div className="flex flex-col flex-1 items-center bg-black font-sans text-zinc-50">
+    <div className="relative z-10 flex flex-col flex-1 items-center bg-transparent font-sans text-zinc-50">
       <main className="flex flex-1 w-full max-w-2xl flex-col gap-8 px-6 py-16 pt-28">
         <header className="flex flex-col gap-2">
           <h1 className="text-3xl font-semibold tracking-tight">
@@ -86,11 +105,16 @@ export function WatchList() {
           {activeFilter && (
             <p className="text-sm text-zinc-500">{activeFilter.description}</p>
           )}
+          {!activeFilter && stars.length > 0 && (
+            <p className="text-sm text-zinc-600">
+              Scroll and add stars — watch connections form behind you.
+            </p>
+          )}
         </header>
 
         <form
           onSubmit={addStar}
-          className="flex flex-col gap-4 rounded-xl border border-white/10 bg-zinc-950 p-4"
+          className="flex flex-col gap-4 rounded-xl border border-white/10 bg-zinc-950/90 p-4 backdrop-blur-sm"
         >
           <OrbitPicker
             value={orbit}
@@ -161,7 +185,7 @@ export function WatchList() {
                 return (
                   <li
                     key={star.id}
-                    className="flex items-center justify-between gap-4 rounded-lg border border-white/10 bg-zinc-950 px-4 py-3"
+                    className="flex items-center justify-between gap-4 rounded-lg border border-white/10 bg-zinc-950/90 px-4 py-3 backdrop-blur-sm"
                   >
                     <div className="flex min-w-0 flex-col gap-1">
                       <div className="flex items-center gap-2">

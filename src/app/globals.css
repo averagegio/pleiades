@@ -115,11 +115,36 @@ body {
   }
 }
 
+@keyframes constellation-link-draw {
+  from {
+    stroke-dashoffset: var(--line-length, 100);
+    opacity: 0.2;
+  }
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+.constellation-link {
+  transition: stroke-dashoffset 0.8s ease-out, opacity 0.6s ease-out;
+}
+
+.constellation-link-new {
+  animation: constellation-link-draw 0.9s ease-out forwards;
+}
+
+.constellation-node-new {
+  animation: constellation-fade-in 0.5s ease-out forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .constellation-star,
   .constellation-glow,
   .constellation-line-draw,
-  .constellation-line {
+  .constellation-line,
+  .constellation-link,
+  .constellation-link-new {
     animation: none;
     opacity: var(--target-opacity, 1);
     stroke-dashoffset: 0;
