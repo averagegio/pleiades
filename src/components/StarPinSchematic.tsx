@@ -5,6 +5,10 @@ type StarPinSchematicProps = {
   activePart?: "led" | "button" | "ble" | "clasp" | null;
 };
 
+/** Four-point star path centered at (160, 145) */
+const STAR_LED_PATH =
+  "M 160 128 L 166 141 L 180 141 L 169 150 L 174 164 L 160 155 L 146 164 L 151 150 L 140 141 L 154 141 Z";
+
 export function StarPinSchematic({
   className = "",
   activePart = null,
@@ -20,44 +24,46 @@ export function StarPinSchematic({
         aria-label="Pleiades Pin schematic"
         role="img"
       >
-        {/* Star body outline */}
-        <polygon
-          points="160,40 190,120 275,120 205,175 230,260 160,215 90,260 115,175 45,120 130,120"
-          fill="none"
-          stroke="rgba(228,228,231,0.35)"
-          strokeWidth="1.5"
-          strokeLinejoin="round"
-        />
-        <polygon
-          points="160,55 180,115 240,115 190,155 210,230 160,195 110,230 130,155 80,115 140,115"
-          fill="rgba(255,255,255,0.04)"
-          stroke="rgba(255,255,255,0.12)"
-          strokeWidth="1"
-        />
-
-        {/* Center LED */}
+        {/* Circular disc body */}
         <circle
           cx="160"
-          cy="145"
-          r="10"
+          cy="160"
+          r="95"
+          fill="rgba(255,255,255,0.03)"
+          stroke="rgba(228,228,231,0.35)"
+          strokeWidth="1.5"
+        />
+        <circle
+          cx="160"
+          cy="160"
+          r="82"
+          fill="none"
+          stroke="rgba(255,255,255,0.08)"
+          strokeWidth="0.75"
+          strokeDasharray="4 3"
+        />
+
+        {/* Star-shaped LED */}
+        <path
+          d={STAR_LED_PATH}
           className={activePart === "led" ? "fill-blue-300" : "fill-white"}
           opacity={activePart === "led" ? 1 : 0.85}
         />
         {activePart === "led" && (
-          <circle cx="160" cy="145" r="18" fill="rgba(147,197,253,0.15)" />
+          <circle cx="160" cy="145" r="22" fill="rgba(147,197,253,0.12)" />
         )}
 
-        {/* Button at lower point */}
+        {/* Tap button on lower edge */}
         <circle
           cx="160"
-          cy="230"
-          r="14"
+          cy="238"
+          r="12"
           fill="rgba(255,255,255,0.08)"
           stroke="rgba(255,255,255,0.25)"
           strokeWidth="1"
           className={activePart === "button" ? "stroke-blue-300" : ""}
         />
-        <circle cx="160" cy="230" r="6" fill="rgba(255,255,255,0.5)" />
+        <circle cx="160" cy="238" r="5" fill="rgba(255,255,255,0.5)" />
 
         {/* BLE module hint */}
         <rect
@@ -85,13 +91,13 @@ export function StarPinSchematic({
 
         {/* Callout lines + labels */}
         <g fill="none" strokeWidth="0.75" className="text-[9px]">
-          <line x1="160" y1="125" x2="160" y2="95" className={highlight("led")} />
+          <line x1="160" y1="128" x2="160" y2="95" className={highlight("led")} />
           <text x="160" y="88" textAnchor="middle" fill="rgb(161,161,170)" fontSize="9">
-            LED
+            Star LED
           </text>
 
-          <line x1="175" y1="230" x2="210" y2="250" className={highlight("button")} />
-          <text x="215" y="254" fill="rgb(161,161,170)" fontSize="9">
+          <line x1="172" y1="238" x2="210" y2="255" className={highlight("button")} />
+          <text x="215" y="259" fill="rgb(161,161,170)" fontSize="9">
             Tap
           </text>
 
@@ -109,7 +115,7 @@ export function StarPinSchematic({
         {/* Pin post */}
         <line
           x1="160"
-          y1="260"
+          y1="255"
           x2="160"
           y2="310"
           stroke="rgba(161,161,170,0.5)"
