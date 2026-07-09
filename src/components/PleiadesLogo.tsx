@@ -16,9 +16,9 @@ const SIZES = {
     lg: { width: 200, height: 80, src: "/pleiades-logo.png" },
   },
   mark: {
-    sm: { width: 52, height: 40, src: "/pleiades-icon.png" },
-    md: { width: 62, height: 48, src: "/pleiades-icon.png" },
-    lg: { width: 78, height: 60, src: "/pleiades-icon.png" },
+    sm: { width: 48, height: 42, src: "/pleiades-icon.png" },
+    md: { width: 56, height: 48, src: "/pleiades-icon.png" },
+    lg: { width: 64, height: 56, src: "/pleiades-icon.png" },
   },
 } as const;
 

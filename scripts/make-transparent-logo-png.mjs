@@ -43,7 +43,7 @@ try {
   );
   await writeFile(
     path.join(root, "public/pleiades-icon.png"),
-    await sharp(iconTransparent).resize(640).png().toBuffer(),
+    await sharp(iconTransparent).resize(640, 560, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toBuffer(),
   );
 } catch {
   await writeFile(
@@ -62,7 +62,7 @@ const iconTransparent = await readFile(
 
 await writeFile(
   path.join(root, "public/pleiades-icon.png"),
-  await sharp(iconTransparent).resize(640).png().toBuffer(),
+  await sharp(iconTransparent).resize(640, 560, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } }).png().toBuffer(),
 );
 
 const iconPngs = await Promise.all(
