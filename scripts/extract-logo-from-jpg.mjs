@@ -16,10 +16,10 @@ const height = meta.height ?? 423;
 const crop =
   mode === "mark"
     ? {
-        left: Math.round(width * 0.16),
-        top: Math.round(height * 0.02),
-        width: Math.round(width * 0.52),
-        height: Math.round(height * 0.58),
+        left: Math.round(width * 0.06),
+        top: 0,
+        width: Math.round(width * 0.62),
+        height: Math.round(height * 0.66),
       }
     : {
         left: Math.round(width * 0.18),
@@ -51,32 +51,38 @@ function luminance(i) {
 for (let y = 0; y < cropHeight; y++) {
   for (let x = 0; x < cropWidth; x++) {
     const i = (y * cropWidth + x) * 4;
-    if (luminance(i) >= 40) opaque[idx(x, y)] = 1;
+    if (luminance(i) >= 38) opaque[idx(x, y)] = 1;
   }
 }
 
 const pCenterX = cropWidth * 0.36;
-const pCenterY = cropHeight * 0.44;
+const pCenterY = cropHeight * 0.52;
 
 function inPRegion(x, y) {
-  return Math.hypot(x - pCenterX, y - pCenterY) < cropWidth * 0.28;
+  return Math.hypot(x - pCenterX, y - pCenterY) < cropWidth * 0.38;
 }
 
 function inNearConstellationRegion(x, y) {
   return (
-    x > cropWidth * 0.44 &&
-    x < cropWidth * 0.8 &&
-    y < cropHeight * 0.4
+    x > cropWidth * 0.34 &&
+    x < cropWidth * 0.94 &&
+    y < cropHeight * 0.44
+  );
+}
+
+function inTrailingClusterRegion(x, y) {
+  return (
+    x > cropWidth * 0.82 &&
+    y > cropHeight * 0.28 &&
+    y < cropHeight * 0.58
   );
 }
 
 function inKeepRegion(x, y) {
-  if (y > cropHeight * 0.96) return false;
-  if (x > cropWidth * 0.82) return false;
-  if (x > cropWidth * 0.66 && y > cropHeight * 0.34 && !inPRegion(x, y)) {
-    return false;
-  }
-  return true;
+  if (y > cropHeight * 0.97) return false;
+  if (inTrailingClusterRegion(x, y)) return false;
+  if (inPRegion(x, y) || inNearConstellationRegion(x, y)) return true;
+  return false;
 }
 
 const seeds = [];
@@ -85,8 +91,8 @@ for (let y = 0; y < cropHeight; y++) {
     if (!opaque[idx(x, y)] || !inKeepRegion(x, y)) continue;
     const i = (y * cropWidth + x) * 4;
     const lum = luminance(i);
-    if (inPRegion(x, y) && lum >= 80) seeds.push([x, y]);
-    if (inNearConstellationRegion(x, y) && lum >= 120) seeds.push([x, y]);
+    if (inPRegion(x, y) && lum >= 65) seeds.push([x, y]);
+    if (inNearConstellationRegion(x, y) && lum >= 100) seeds.push([x, y]);
   }
 }
 
@@ -147,7 +153,7 @@ const trimmed = await sharp(data, {
 
 const trimmedMeta = await sharp(trimmed).metadata();
 const pad = Math.round(
-  Math.max(trimmedMeta.width ?? 0, trimmedMeta.height ?? 0) * 0.08,
+  Math.max(trimmedMeta.width ?? 0, trimmedMeta.height ?? 0) * 0.14,
 );
 
 const png = await sharp(trimmed)
@@ -158,7 +164,7 @@ const png = await sharp(trimmed)
     right: pad,
     background: { r: 0, g: 0, b: 0, alpha: 0 },
   })
-  .resize(1100, 960, {
+  .resize(1200, 1040, {
     fit: "contain",
     background: { r: 0, g: 0, b: 0, alpha: 0 },
   })
