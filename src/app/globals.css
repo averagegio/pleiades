@@ -185,9 +185,25 @@ body {
   animation: howto-slide-in-back 0.35s ease-out;
 }
 
+@keyframes pitch-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pitch-slide {
+  animation: pitch-slide-in 0.35s ease-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .howto-slide-forward,
-  .howto-slide-back {
+  .howto-slide-back,
+  .pitch-slide {
     animation: none;
   }
 }
