@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { PleiadesLogo } from "@/components/PleiadesLogo";
 import {
   ACCOUNT_PAGES,
   LEGAL_PAGES,
@@ -78,17 +78,9 @@ export function SideDrawer({ open, onClose }: SideDrawerProps) {
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <p className="mb-6 flex items-center gap-3 text-xs font-medium uppercase tracking-[0.2em] text-zinc-600">
-          <Image
-            src="/pleiades-icon.png"
-            alt=""
-            width={28}
-            height={28}
-            className="h-7 w-7 shrink-0"
-            unoptimized
-          />
-          Pleiades
-        </p>
+        <div className="mb-8 border-b border-white/10 pb-6">
+          <PleiadesLogo variant="full" size="sm" href="/" onClick={onClose} />
+        </div>
 
         <p className="mb-2 text-[10px] font-medium uppercase tracking-widest text-zinc-700">
           Pages

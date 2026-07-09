@@ -5,21 +5,15 @@
       <stop offset="42%" stop-color="#e4e4e7"/>
       <stop offset="100%" stop-color="#71717a"/>
     </linearGradient>
-    <linearGradient id="star" x1="280" y1="120" x2="360" y2="280" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="100%" stop-color="#a1a1aa"/>
-    </linearGradient>
   </defs>
-  <g transform="translate(64 0) scale(1)">
+  <g transform="translate(64 0)">
     <path
       fill="url(#metal)"
-      d="M112 72h152c88.4 0 160 71.6 160 160s-71.6 160-160 160H176v48H112V72zm64 64v192h88c70.7 0 128-57.3 128-128S334.7 72 264 72h-88z"
+      fill-rule="evenodd"
+      clip-rule="evenodd"
+      d="M112 72h152c88.4 0 160 71.6 160 160s-71.6 160-160 160H176v48H112V72zm64 64v192h88c70.7 0 128-57.3 128-128S334.7 72 264 72h-88z
+      M256 238 L250.3 213.9 L229.1 226.9 L242.1 205.7 L218 200 L242.1 194.3 L229.1 173.1 L250.3 186.1 L256 162 L261.7 186.1 L282.9 173.1 L269.9 194.3 L294 200 L269.9 205.7 L282.9 226.9 L261.7 213.9 Z"
     />
-    <path
-      fill="url(#star)"
-      d="M256 156l14 34 36 3-27 22 8 35-31-20-31 20 8-35-27-22 36-3z"
-    />
-    <rect x="248" y="236" width="16" height="64" rx="2" fill="url(#star)"/>
   </g>
   <text
     x="320"
