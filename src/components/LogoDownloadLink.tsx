@@ -5,8 +5,8 @@ type LogoDownloadLinkProps = {
 
 const DOWNLOADS = {
   full: {
-    href: "/pleiades-logo.png",
-    filename: "pleiades-logo.png",
+    href: "/pleiades-logo-transparent.png",
+    filename: "pleiades-logo-transparent.png",
     label: "Download logo (PNG)",
   },
   mark: {
