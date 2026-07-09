@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { LEGAL_PAGES } from "@/lib/navigation";
+import { LogoDownloadLink } from "@/components/LogoDownloadLink";
 import { PleiadesLogo } from "@/components/PleiadesLogo";
+import { LEGAL_PAGES } from "@/lib/navigation";
 
 type SiteFooterProps = {
   className?: string;
@@ -13,6 +14,10 @@ export function SiteFooter({ className = "" }: SiteFooterProps) {
     >
       <div className="mx-auto flex max-w-4xl flex-col items-center gap-6 text-center">
         <PleiadesLogo variant="full" size="md" />
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+          <LogoDownloadLink variant="full" />
+          <LogoDownloadLink variant="mark" />
+        </div>
         <p className="max-w-sm text-sm text-zinc-500">
           The people watching app — private constellation, public sky.
         </p>
