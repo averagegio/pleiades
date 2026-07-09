@@ -16,8 +16,8 @@ const SIZES = {
     lg: { width: 200, height: 80, src: "/pleiades-logo.png" },
   },
   mark: {
-    sm: { width: 32, height: 32, src: "/pleiades-icon.png" },
-    md: { width: 40, height: 40, src: "/pleiades-icon.png" },
+    sm: { width: 36, height: 36, src: "/pleiades-icon.png" },
+    md: { width: 44, height: 44, src: "/pleiades-icon.png" },
     lg: { width: 56, height: 56, src: "/pleiades-icon.png" },
   },
 } as const;
@@ -40,7 +40,7 @@ export function PleiadesLogo({
       className={`h-auto w-auto object-contain ${className}`}
       style={{ maxHeight: height, maxWidth: width }}
       unoptimized
-      priority={variant === "full" && size === "sm"}
+      priority={variant === "mark" && size === "md"}
     />
   );
 

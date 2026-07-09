@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Pleiades — People Watching",
     description: "The people watching app",
-    images: [{ url: "/pleiades-logo.png", width: 1600, height: 1900 }],
+    images: [{ url: "/pleiades-icon.png", width: 512, height: 512 }],
   },
 };
 
