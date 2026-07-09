@@ -16,10 +16,10 @@ const height = meta.height ?? 423;
 const crop =
   mode === "mark"
     ? {
-        left: Math.round(width * 0.2),
-        top: Math.round(height * 0.04),
-        width: Math.round(width * 0.44),
-        height: Math.round(height * 0.58),
+        left: Math.round(width * 0.1),
+        top: Math.round(height * 0.02),
+        width: Math.round(width * 0.8),
+        height: Math.round(height * 0.6),
       }
     : {
         left: Math.round(width * 0.18),
@@ -36,88 +36,49 @@ const { data, info } = await source
 
 const cropWidth = info.width;
 const cropHeight = info.height;
-const opaque = new Uint8Array(cropWidth * cropHeight);
-
-for (let y = 0; y < cropHeight; y++) {
-  for (let x = 0; x < cropWidth; x++) {
-    const i = (y * cropWidth + x) * 4;
-    const lum =
-      0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
-    const idx = y * cropWidth + x;
-    if (lum >= 55) opaque[idx] = 1;
-  }
-}
 
 function idx(x, y) {
   return y * cropWidth + x;
 }
 
-const keep = new Uint8Array(cropWidth * cropHeight);
-const visited = new Uint8Array(cropWidth * cropHeight);
-let largest = [];
-
-for (let y = 0; y < cropHeight; y++) {
-  for (let x = 0; x < cropWidth; x++) {
-    const start = idx(x, y);
-    if (!opaque[start] || visited[start]) continue;
-
-    const component = [];
-    const queue = [[x, y]];
-    visited[start] = 1;
-
-    while (queue.length) {
-      const [px, py] = queue.shift();
-      component.push([px, py]);
-      for (const [dx, dy] of [
-        [1, 0],
-        [-1, 0],
-        [0, 1],
-        [0, -1],
-        [1, 1],
-        [-1, 1],
-        [1, -1],
-        [-1, -1],
-      ]) {
-        const nx = px + dx;
-        const ny = py + dy;
-        if (nx < 0 || ny < 0 || nx >= cropWidth || ny >= cropHeight) continue;
-        const n = idx(nx, ny);
-        if (!opaque[n] || visited[n]) continue;
-        visited[n] = 1;
-        queue.push([nx, ny]);
-      }
-    }
-
-    if (component.length > largest.length) largest = component;
-  }
+function luminance(i) {
+  return (
+    0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2]
+  );
 }
-
-for (const [x, y] of largest) keep[idx(x, y)] = 1;
 
 for (let y = 0; y < cropHeight; y++) {
   for (let x = 0; x < cropWidth; x++) {
     const n = idx(x, y);
     const i = n * 4;
-    if (!keep[n]) {
+    const lum = luminance(i);
+
+    if (lum < 34) {
       data[i + 3] = 0;
       continue;
     }
-    const lum =
-      0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
-    data[i + 3] = Math.min(255, Math.round((lum - 34) * 3.2));
+
+    const alpha =
+      lum >= 180
+        ? 255
+        : lum >= 90
+          ? Math.min(255, Math.round(80 + (lum - 90) * 2.2))
+          : Math.min(220, Math.round((lum - 34) * 2.8));
+
+    data[i + 3] = alpha;
   }
 }
 
 const trimmed = await sharp(data, {
   raw: { width: cropWidth, height: cropHeight, channels: 4 },
 })
-  .trim({ threshold: 2 })
+  .trim({ threshold: 1 })
   .png()
   .toBuffer();
 
 const trimmedMeta = await sharp(trimmed).metadata();
 const pad = Math.round(
-  Math.max(trimmedMeta.width ?? 0, trimmedMeta.height ?? 0) * 0.12,
+  Math.max(trimmedMeta.width ?? 0, trimmedMeta.height ?? 0) * 0.08,
 );
 
 const png = await sharp(trimmed)
@@ -128,7 +89,7 @@ const png = await sharp(trimmed)
     right: pad,
     background: { r: 0, g: 0, b: 0, alpha: 0 },
   })
-  .resize(1024, 1024, {
+  .resize(1200, 900, {
     fit: "contain",
     background: { r: 0, g: 0, b: 0, alpha: 0 },
   })
