@@ -79,7 +79,7 @@ export function SideDrawer({ open, onClose }: SideDrawerProps) {
         }`}
       >
         <div className="mb-8 border-b border-white/10 pb-6">
-          <PleiadesLogo variant="full" size="sm" href="/" onClick={onClose} />
+          <PleiadesLogo variant="mark" size="md" href="/" onClick={onClose} />
         </div>
 
         <p className="mb-2 text-[10px] font-medium uppercase tracking-widest text-zinc-700">

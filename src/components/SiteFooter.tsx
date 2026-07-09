@@ -13,11 +13,8 @@ export function SiteFooter({ className = "" }: SiteFooterProps) {
       className={`relative z-10 border-t border-white/10 bg-black px-6 py-10 ${className}`}
     >
       <div className="mx-auto flex max-w-4xl flex-col items-center gap-6 text-center">
-        <PleiadesLogo variant="full" size="md" />
-        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
-          <LogoDownloadLink variant="full" />
-          <LogoDownloadLink variant="mark" />
-        </div>
+        <PleiadesLogo variant="mark" size="lg" />
+        <LogoDownloadLink variant="mark" />
         <p className="max-w-sm text-sm text-zinc-500">
           The people watching app — private constellation, public sky.
         </p>

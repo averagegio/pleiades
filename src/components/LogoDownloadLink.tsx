@@ -10,9 +10,9 @@ const DOWNLOADS = {
     label: "Download logo (PNG)",
   },
   mark: {
-    href: "/pleiades-icon.png",
-    filename: "pleiades-icon.png",
-    label: "Download icon (PNG)",
+    href: "/pleiades-icon-transparent.png",
+    filename: "pleiades-icon-transparent.png",
+    label: "Download logo (PNG)",
   },
 } as const;
 
