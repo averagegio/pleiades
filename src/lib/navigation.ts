@@ -12,6 +12,7 @@ export const NAV_PAGES: NavPage[] = [
   { href: "/pin", label: "Pin" },
   { href: "/pin", label: "Checkout", hash: "#preorder" },
   { href: "/about", label: "About" },
+  { href: "/pitch", label: "Pitch deck" },
 ];
 
 export const ACCOUNT_PAGES: NavPage[] = [
