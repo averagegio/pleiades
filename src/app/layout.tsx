@@ -15,6 +15,17 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Pleiades — People Watching",
   description: "The people watching app",
+  icons: {
+    icon: [
+      { url: "/pleiades-icon.png", type: "image/png" },
+    ],
+    apple: [{ url: "/pleiades-icon.png", type: "image/png" }],
+  },
+  openGraph: {
+    title: "Pleiades — People Watching",
+    description: "The people watching app",
+    images: [{ url: "/pleiades-logo.png", width: 1600, height: 1900 }],
+  },
 };
 
 export default function RootLayout({

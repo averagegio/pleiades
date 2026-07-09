@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -77,7 +78,15 @@ export function SideDrawer({ open, onClose }: SideDrawerProps) {
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <p className="mb-6 text-xs font-medium uppercase tracking-[0.2em] text-zinc-600">
+        <p className="mb-6 flex items-center gap-3 text-xs font-medium uppercase tracking-[0.2em] text-zinc-600">
+          <Image
+            src="/pleiades-icon.png"
+            alt=""
+            width={28}
+            height={28}
+            className="h-7 w-7 shrink-0"
+            unoptimized
+          />
           Pleiades
         </p>
 

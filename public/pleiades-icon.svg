@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-label="Pleiades mark">
+  <defs>
+    <linearGradient id="metal" x1="120" y1="80" x2="392" y2="432" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="42%" stop-color="#e4e4e7"/>
+      <stop offset="100%" stop-color="#71717a"/>
+    </linearGradient>
+    <linearGradient id="star" x1="220" y1="180" x2="292" y2="340" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#a1a1aa"/>
+    </linearGradient>
+  </defs>
+  <!-- Bold rounded P -->
+  <path
+    fill="url(#metal)"
+    d="M112 72h152c88.4 0 160 71.6 160 160s-71.6 160-160 160H176v48H112V72zm64 64v192h88c70.7 0 128-57.3 128-128S334.7 72 264 72h-88z"
+  />
+  <!-- Eight-point star -->
+  <path
+    fill="url(#star)"
+    d="M256 156l14 34 36 3-27 22 8 35-31-20-31 20 8-35-27-22 36-3z"
+  />
+  <!-- Star tail -->
+  <rect x="248" y="236" width="16" height="64" rx="2" fill="url(#star)"/>
+</svg>
