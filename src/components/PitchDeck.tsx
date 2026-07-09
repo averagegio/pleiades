@@ -2,6 +2,13 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
+import {
+  MARKETING_90,
+  MARKETING_SCALE,
+  ORBIT_FLOW,
+  orbitById,
+} from "@/lib/pitch-content";
+import { SISTER_ORBITS } from "@/lib/sister-orbits";
 
 type Slide = {
   id: string;
@@ -106,6 +113,139 @@ const PROJECTIONS = [
     arr: "$420M",
   },
 ];
+
+function OrbitFlowDiagram() {
+  return (
+    <div className="space-y-4">
+      <div className="hidden items-center justify-between gap-2 text-[10px] uppercase tracking-widest text-zinc-600 sm:flex">
+        <span>Private sky</span>
+        <span className="text-zinc-700">→</span>
+        <span>Public sky</span>
+      </div>
+      <div className="grid gap-3">
+        {ORBIT_FLOW.map((step) => (
+          <div
+            key={step.stage}
+            className="grid gap-3 rounded-xl border border-white/10 bg-zinc-950/70 p-4 sm:grid-cols-[auto_1fr_auto]"
+          >
+            <div className="flex items-start gap-3">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-sky-400/30 bg-sky-400/10 text-sm font-semibold text-sky-200">
+                {step.step}
+              </span>
+              <div>
+                <p className="text-sm font-semibold text-zinc-100">
+                  {step.stage}
+                </p>
+                <div className="mt-1 flex flex-wrap gap-1.5">
+                  {step.orbitIds.map((id) => {
+                    const o = orbitById(id);
+                    return o ? (
+                      <span
+                        key={id}
+                        className="rounded-full border border-white/15 px-2 py-0.5 text-[11px] text-zinc-400"
+                      >
+                        {o.name} · {o.feature}
+                      </span>
+                    ) : null;
+                  })}
+                </div>
+              </div>
+            </div>
+            <p className="text-sm leading-relaxed text-zinc-400 sm:col-span-1">
+              {step.action}
+            </p>
+            <p className="text-xs text-zinc-600 sm:text-right">{step.product}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SisterOrbitGrid({ ids }: { ids?: string[] }) {
+  const list = ids
+    ? SISTER_ORBITS.filter((o) => ids.includes(o.id))
+    : SISTER_ORBITS;
+
+  return (
+    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {list.map((orbit) => (
+        <div
+          key={orbit.id}
+          className="rounded-xl border border-white/10 bg-zinc-950/60 p-4"
+        >
+          <div className="flex items-baseline justify-between gap-2">
+            <h3 className="font-semibold text-zinc-100">{orbit.name}</h3>
+            <span className="text-[10px] uppercase tracking-widest text-zinc-600">
+              {orbit.feature}
+            </span>
+          </div>
+          <p className="mt-2 text-sm italic text-zinc-500">{orbit.tagline}</p>
+          <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+            {orbit.description}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ConstellationMap() {
+  return (
+    <div className="relative mx-auto aspect-[16/10] max-w-2xl rounded-xl border border-white/10 bg-black p-6">
+      <svg
+        viewBox="0 0 100 100"
+        className="h-full w-full"
+        aria-label="Seven sister orbits constellation map"
+      >
+        {SISTER_ORBITS.map((a) =>
+          SISTER_ORBITS.map((b) => {
+            if (a.id >= b.id) return null;
+            return (
+              <line
+                key={`${a.id}-${b.id}`}
+                x1={a.x * 100}
+                y1={a.y * 100}
+                x2={b.x * 100}
+                y2={b.y * 100}
+                stroke="rgba(255,255,255,0.08)"
+                strokeWidth="0.3"
+              />
+            );
+          }),
+        )}
+        {SISTER_ORBITS.map((orbit) => (
+          <g key={orbit.id}>
+            <circle
+              cx={orbit.x * 100}
+              cy={orbit.y * 100}
+              r={orbit.id === "alcyone" ? 3.2 : 2.4}
+              fill={
+                orbit.id === "sterope"
+                  ? "rgba(147,197,253,0.9)"
+                  : orbit.id === "merope"
+                    ? "rgba(255,255,255,0.35)"
+                    : "rgba(255,255,255,0.75)"
+              }
+            />
+            <text
+              x={orbit.x * 100}
+              y={orbit.y * 100 + 6}
+              textAnchor="middle"
+              fill="rgba(161,161,170,0.9)"
+              fontSize="3.2"
+            >
+              {orbit.name}
+            </text>
+          </g>
+        ))}
+      </svg>
+      <p className="mt-2 text-center text-xs text-zinc-600">
+        Each sister = one orbit · one feature · one note-taking mode
+      </p>
+    </div>
+  );
+}
 
 function Shot({
   src,
@@ -277,6 +417,121 @@ const slides: Slide[] = [
     ),
   },
   {
+    id: "orbits-map",
+    eyebrow: "Product architecture",
+    title: "Seven sister orbits",
+    body: "The Pleiades myth maps to seven app subgroups — each star is a person, each orbit is a feature mode.",
+    content: (
+      <div className="grid gap-6 lg:grid-cols-[1fr_1.1fr] lg:items-start">
+        <ConstellationMap />
+        <div className="space-y-3">
+          {SISTER_ORBITS.map((orbit) => (
+            <div
+              key={orbit.id}
+              className="flex gap-3 rounded-lg border border-white/10 px-3 py-2.5"
+            >
+              <span className="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-sky-300/80" />
+              <div>
+                <p className="text-sm font-medium text-zinc-200">
+                  {orbit.name}{" "}
+                  <span className="font-normal text-zinc-500">
+                    · {orbit.feature}
+                  </span>
+                </p>
+                <p className="text-xs text-zinc-500">{orbit.tagline}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: "orbits-flow",
+    eyebrow: "User flow",
+    title: "How stars move through your sky",
+    body: "From offline capture to public article — one constellation, six transitions.",
+    content: (
+      <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+        <OrbitFlowDiagram />
+        <Shot
+          src="/pitch/02-watch.png"
+          alt="Watch list orbit picker"
+          caption="Orbit picker in watch list — filter by sister"
+        />
+      </div>
+    ),
+  },
+  {
+    id: "orbits-private",
+    eyebrow: "Sister orbits I–VI",
+    title: "Private sky — capture, nurture, vault, archive",
+    body: "Six orbits for personal people-watching. Notes stay yours until you choose otherwise.",
+    content: (
+      <SisterOrbitGrid
+        ids={["electra", "alcyone", "maia", "taygeta", "merope", "celaeno"]}
+      />
+    ),
+  },
+  {
+    id: "orbits-public",
+    eyebrow: "Sister orbit VII",
+    title: "Sterope — public sky & growth loop",
+    body: "Public figures and creators only. Journal drafts run the SEO agent, publish to /articles, post to X.",
+    content: (
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="rounded-xl border border-sky-400/20 bg-[radial-gradient(ellipse_at_top,rgba(147,197,253,0.1),transparent_60%),#09090b] p-6">
+          {SISTER_ORBITS.filter((o) => o.id === "sterope").map((orbit) => (
+            <div key={orbit.id}>
+              <p className="text-[10px] uppercase tracking-widest text-sky-300/70">
+                {orbit.feature}
+              </p>
+              <h3 className="mt-2 text-2xl font-semibold">{orbit.name}</h3>
+              <p className="mt-2 text-lg italic text-zinc-400">
+                {orbit.tagline}
+              </p>
+              <p className="mt-4 text-sm leading-relaxed text-zinc-400">
+                {orbit.description}
+              </p>
+            </div>
+          ))}
+          <ol className="mt-6 space-y-2 border-t border-white/10 pt-4 text-sm text-zinc-300">
+            <li>
+              <span className="text-zinc-600">1.</span> Draft in Journal
+              (Sterope orbit)
+            </li>
+            <li>
+              <span className="text-zinc-600">2.</span> Run SEO agent loop —
+              meta, slug, score
+            </li>
+            <li>
+              <span className="text-zinc-600">3.</span> Publish →{" "}
+              <code className="text-zinc-500">/articles/[slug]</code>
+            </li>
+            <li>
+              <span className="text-zinc-600">4.</span> Post to X with article
+              link
+            </li>
+          </ol>
+        </div>
+        <ShotGrid
+          items={[
+            {
+              src: "/pitch/03-journal.png",
+              alt: "Journal dashboard",
+              caption: "Journal — make public + SEO loop",
+            },
+            {
+              src: "/pitch/09-drawer.png",
+              alt: "Sidebar with sister orbits",
+              caption: "Drawer — jump to any sister orbit",
+            },
+          ]}
+        />
+      </div>
+    ),
+  },
+  {
     id: "value",
     eyebrow: "Value add",
     title: "Why Pleiades wins the category",
@@ -412,6 +667,93 @@ const slides: Slide[] = [
           Assumptions: ~8–12% free→paid conversion by Y3; Pin attach ~15–25% of
           activated users; public SEO + X as primary unpaid acquisition.
         </p>
+      </div>
+    ),
+  },
+  {
+    id: "marketing-90",
+    eyebrow: "Go-to-market",
+    title: "90-day plan → 1M signups",
+    body: "Ignite viral loop, scale paid + creators, blitz with events and SEO public sky.",
+    content: (
+      <div className="grid gap-4 lg:grid-cols-3">
+        {MARKETING_90.map((m) => (
+          <div
+            key={m.month}
+            className="flex flex-col rounded-xl border border-white/10 bg-zinc-950/80 p-5"
+          >
+            <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-600">
+              {m.month}
+            </p>
+            <p className="mt-2 text-2xl font-semibold text-sky-200/90">
+              {m.target}
+            </p>
+            <p className="mt-1 text-sm font-medium text-zinc-200">
+              {m.theme}
+            </p>
+            <ul className="mt-4 flex flex-1 flex-col gap-2 border-t border-white/10 pt-4">
+              {m.tactics.map((t) => (
+                <li key={t} className="text-sm text-zinc-400">
+                  <span className="mr-2 text-zinc-600">·</span>
+                  {t}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-4 text-xs text-zinc-600">{m.kpis}</p>
+          </div>
+        ))}
+      </div>
+    ),
+  },
+  {
+    id: "marketing-scale",
+    eyebrow: "Scale plan",
+    title: "After 1M — brand & platform expansion",
+    body: "Shift from buying signups to category ownership: Plus, Pin, Public Sky, Teams.",
+    content: (
+      <div className="space-y-4">
+        {MARKETING_SCALE.map((phase) => (
+          <div
+            key={phase.phase}
+            className="grid gap-4 rounded-xl border border-white/10 bg-zinc-950/70 p-5 sm:grid-cols-[140px_1fr_auto]"
+          >
+            <div>
+              <p className="text-[10px] uppercase tracking-widest text-zinc-600">
+                {phase.phase}
+              </p>
+              <p className="mt-2 text-sm font-semibold text-zinc-100">
+                {phase.title}
+              </p>
+            </div>
+            <ul className="space-y-1.5">
+              {phase.items.map((item) => (
+                <li key={item} className="text-sm text-zinc-400">
+                  <span className="mr-2 text-zinc-600">✦</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <p className="text-xs font-medium text-sky-200/80 sm:text-right">
+              {phase.target}
+            </p>
+          </div>
+        ))}
+        <div className="grid gap-3 sm:grid-cols-4">
+          {[
+            { label: "Plus", detail: "$12/mo subs" },
+            { label: "Pin", detail: "Hardware + BLE" },
+            { label: "Public Sky", detail: "SEO + creators" },
+            { label: "Teams", detail: "B2B orbits" },
+          ].map((p) => (
+            <div
+              key={p.label}
+              className="rounded-lg border border-white/10 px-3 py-3 text-center"
+            >
+              <p className="text-sm font-semibold">{p.label}</p>
+              <p className="mt-1 text-xs text-zinc-500">{p.detail}</p>
+            </div>
+          ))}
+        </div>
       </div>
     ),
   },
