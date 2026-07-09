@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useRef, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { ConstellationBackground } from "@/components/ConstellationBackground";
+import { SiteFooter } from "@/components/SiteFooter";
 import { WatchListHowTo } from "@/components/how-to/WatchListHowTo";
 import { PleiadesHero } from "@/components/PleiadesHero";
 import { ScrollIndicator } from "@/components/ScrollIndicator";
@@ -54,7 +55,7 @@ function IntroScrollExperience() {
   }, [highlightId]);
 
   return (
-    <AppShell showNav={showNav}>
+    <AppShell showNav={showNav} showFooter={false}>
       <ConstellationBackground
         scrollProgress={scrollProgress}
         stars={stars}
@@ -106,6 +107,10 @@ function IntroScrollExperience() {
           <div className="relative z-10 mx-auto w-full max-w-2xl px-6 pb-24 pt-8">
             <WatchListHowTo />
           </div>
+        </section>
+
+        <section id="site-footer" className="relative snap-start">
+          <SiteFooter />
         </section>
       </div>
     </AppShell>

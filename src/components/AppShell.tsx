@@ -3,13 +3,19 @@
 import { useState } from "react";
 import { HamburgerButton } from "@/components/HamburgerButton";
 import { SideDrawer } from "@/components/SideDrawer";
+import { SiteFooter } from "@/components/SiteFooter";
 
 type AppShellProps = {
   children: React.ReactNode;
   showNav?: boolean;
+  showFooter?: boolean;
 };
 
-export function AppShell({ children, showNav = true }: AppShellProps) {
+export function AppShell({
+  children,
+  showNav = true,
+  showFooter = true,
+}: AppShellProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
@@ -23,7 +29,10 @@ export function AppShell({ children, showNav = true }: AppShellProps) {
           <SideDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
         </>
       )}
-      {children}
+      <div className="flex min-h-dvh flex-col">
+        <div className="flex-1">{children}</div>
+        {showFooter && <SiteFooter />}
+      </div>
     </>
   );
 }
