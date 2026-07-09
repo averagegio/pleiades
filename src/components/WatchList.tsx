@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { OrbitPicker } from "@/components/OrbitPicker";
+import { NoteFieldWithVoice } from "@/components/NoteFieldWithVoice";
 import {
   DEFAULT_ORBIT,
   getOrbitById,
@@ -136,13 +137,7 @@ export function WatchList({
             placeholder="Nickname or name"
             className="h-11 rounded-lg border border-white/10 bg-transparent px-3 text-base text-zinc-50 outline-none focus:border-white/25"
           />
-          <input
-            aria-label="Note"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            placeholder="Your private note (optional)"
-            className="h-11 rounded-lg border border-white/10 bg-transparent px-3 text-base text-zinc-50 outline-none focus:border-white/25"
-          />
+          <NoteFieldWithVoice value={note} onChange={setNote} />
 
           {orbit === "alcyone" && (
             <label className="flex flex-col gap-2 text-sm text-zinc-400">
